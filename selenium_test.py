@@ -1,7 +1,7 @@
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.ui import Select, WebDriverWait
 
 print("Starting TechFest Selenium Tests...")
 
@@ -11,6 +11,8 @@ driver = webdriver.Remote(
     command_executor="http://selenium:4444",
     options=options
 )
+
+wait = WebDriverWait(driver, 10)
 
 try:
     driver.get("http://event-registration/")
@@ -65,18 +67,23 @@ try:
 
     register.click()
 
-    assert "Registration successful" in success.text
+    wait.until(
+        lambda d: "Registration successful" in success.text
+    )
+
     print("TEST 4 PASSED: Valid registration is successful.")
 
     # TEST 5: Check participant table
+    wait.until(
+        lambda d: d.find_element(By.ID, "count").text == "1"
+    )
+
     rows = driver.find_elements(
-        By.CSS_SELECTOR,
-        "#regTable tbody tr"
+        By.CSS_SELECTOR, "#regTable tbody tr"
     )
 
     assert len(rows) == 1
     assert rows[0].find_elements(By.TAG_NAME, "td")[1].text == "Saklen Raza"
-
     assert driver.find_element(By.ID, "count").text == "1"
 
     print("TEST 5 PASSED: Participant added to table.")
