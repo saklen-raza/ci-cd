@@ -1,0 +1,58 @@
+
+#!/bin/bash
+set -e
+
+echo "===== TECHFEST CI/CD STARTED ====="
+
+echo "STEP 1: Checking project files"
+
+test -f index.html
+test -f style.css
+test -f script.js
+test -f Dockerfile
+test -f test.py
+
+echo "All project files found."
+
+echo "STEP 2: Building Docker image"
+
+docker build -t techfest:latest .
+
+echo "STEP 3: Creating Docker network"
+
+docker network inspect event-net >/dev/null 2>&1 || docker network create event-net
+
+echo "STEP 4: Deploying website"
+
+docker rm -f event-registration || true
+
+docker run -d \
+  --name event-registration \
+  --network event-net \
+  -p 8082:80 \
+  techfest:latest
+
+echo "STEP 5: Starting Selenium"
+
+docker rm -f selenium || true
+
+docker run -d \
+  --name selenium \
+  --network event-net \
+  --shm-size="2g" \
+  selenium/standalone-chrome:latest
+
+trap 'docker rm -f selenium >/dev/null 2>&1 || true' EXIT
+
+echo "Waiting for Selenium..."
+sleep 20
+
+echo "STEP 6: Running Python Selenium tests"
+
+docker run --rm -i \
+  --network event-net \
+  python:3.12-slim \
+  sh -c "pip install --quiet selenium && python -" \
+  < test.py
+
+echo "===== TECHFEST CI/CD COMPLETED ====="
