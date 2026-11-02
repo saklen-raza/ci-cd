@@ -1,4 +1,5 @@
 
+
 const form = document.getElementById("regForm");
 
 const nameInput = document.getElementById("name");
@@ -64,14 +65,16 @@ form.addEventListener("submit", function (e) {
 
     count.textContent = registeredCount;
 
+    // Reset form BEFORE displaying success message
+    form.reset();
+
+    // Display success message
     success.textContent =
         "Registration successful! Welcome, " + name + ".";
 
-    // Clear the form
-    form.reset();
 });
 
-// Clear messages when form is reset
+// Clear messages when form is reset manually
 form.addEventListener("reset", function () {
     error.textContent = "";
     success.textContent = "";

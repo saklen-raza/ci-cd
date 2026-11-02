@@ -37,7 +37,9 @@ try:
 
     register.click()
 
-    assert "Please fill in all the fields" in error.text
+    wait.until(
+        lambda d: "Please fill in all the fields" in error.text
+    )
     print("TEST 1 PASSED: Empty name is rejected.")
 
     # TEST 2: Invalid email
@@ -47,7 +49,9 @@ try:
 
     register.click()
 
-    assert "valid email" in error.text
+    wait.until(
+        lambda d: "valid email" in error.text
+    )
     print("TEST 2 PASSED: Invalid email is rejected.")
 
     # TEST 3: Invalid phone number
@@ -58,7 +62,9 @@ try:
 
     register.click()
 
-    assert "10-digit" in error.text
+    wait.until(
+        lambda d: "10-digit" in error.text
+    )
     print("TEST 3 PASSED: Invalid phone number is rejected.")
 
     # TEST 4: Valid registration
