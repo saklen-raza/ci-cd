@@ -55,4 +55,4 @@ docker run --rm -i \
   sh -c "pip install --quiet selenium && python -" \
   < test.py
 
-echo "===== TECHFEST CI/CD COMPLETED ====="
+echo "===== TECHFEST CI/CD COMPLETED ===="
